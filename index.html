@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -14,6 +15,7 @@ body{
     background:#f2f4f8;
 }
 
+
 header{
     background:#4f46e5;
     color:white;
@@ -23,9 +25,11 @@ header{
     font-weight:bold;
 }
 
+
 main{
     padding:20px;
 }
+
 
 button{
     width:100%;
@@ -35,12 +39,14 @@ button{
     background:#4f46e5;
     color:white;
     font-size:18px;
-    margin-bottom:15px;
+    margin-bottom:10px;
 }
+
 
 input,textarea{
     background:white;
 }
+
 
 .card{
     background:white;
@@ -50,25 +56,29 @@ input,textarea{
     box-shadow:0 2px 8px rgba(0,0,0,0.1);
 }
 
+
 .name{
     font-size:18px;
     font-weight:bold;
 }
 
+
 .type{
     color:#666;
-    margin-top:5px;
 }
 
-.memo{
-    margin-top:8px;
-}
 
 .date{
     color:#777;
     font-size:14px;
     margin-top:8px;
 }
+
+
+.memo{
+    margin-top:8px;
+}
+
 
 .card button{
     background:#ef4444;
@@ -85,7 +95,9 @@ input,textarea{
 <body>
 
 
-<header>Sassy</header>
+<header>
+Sassy
+</header>
 
 
 <main>
@@ -127,12 +139,23 @@ style="width:100%;height:80px;padding:12px;margin-bottom:10px;border-radius:8px;
 type="text"
 id="searchInput"
 placeholder="図面番号・ファイル名で検索..."
-style="width:100%;padding:12px;margin-bottom:20px;border-radius:8px;border:1px solid #ccc;box-sizing:border-box;"
+style="width:100%;padding:12px;margin-bottom:10px;border-radius:8px;border:1px solid #ccc;box-sizing:border-box;"
 >
 
 
+<label style="display:block;margin-bottom:20px;">
+
+<input type="checkbox" id="latestOnly">
+
+最新版のみ表示
+
+</label>
+
+
 <button onclick="document.getElementById('fileInput').click()">
+
 ＋ 図面を追加
+
 </button>
 
 
