@@ -25,3 +25,19 @@ fileInput.addEventListener("change", function () {
     this.value = "";
 
 });
+const searchInput = document.getElementById("searchInput");
+
+searchInput.addEventListener("input", function () {
+  const keyword = this.value.toLowerCase();
+  const cards = document.querySelectorAll(".card");
+
+  cards.forEach(card => {
+    const text = card.innerText.toLowerCase();
+
+    if (text.includes(keyword)) {
+      card.style.display = "";
+    } else {
+      card.style.display = "none";
+    }
+  });
+});
