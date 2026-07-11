@@ -64,7 +64,19 @@ button{
 <main>
 
 <input type="file" id="fileInput" accept=".pdf,.jpg,.jpeg,.png" hidden multiple>
+<input 
+type="text"
+id="drawingNumber"
+placeholder="図面番号（例：A-001）"
+style="width:100%;padding:12px;margin-bottom:10px;border-radius:8px;border:1px solid #ccc;box-sizing:border-box;"
+>
 
+<input 
+type="text"
+id="drawingName"
+placeholder="図面名（例：1階平面図）"
+style="width:100%;padding:12px;margin-bottom:20px;border-radius:8px;border:1px solid #ccc;box-sizing:border-box;"
+>
 <button onclick="document.getElementById('fileInput').click()">
 <input type="file" id="fileInput" accept=".pdf,.jpg,.jpeg,.png" hidden multiple>
 
