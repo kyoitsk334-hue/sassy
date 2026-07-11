@@ -63,7 +63,13 @@ button{
 
 <main>
 
-<button>＋ 図面を追加</button>
+<input type="file" id="fileInput" accept=".pdf,.jpg,.jpeg,.png" hidden>
+
+<button onclick="document.getElementById('fileInput').click()">
+＋ 図面を追加
+</button>
+
+<div id="fileList"></div>
 
 <div class="card">
 <div class="name">A-001 平面図.pdf</div>
