@@ -1,8 +1,10 @@
 const fileInput = document.getElementById("fileInput");
 const fileList = document.getElementById("fileList");
-const searchInput = document.getElementById("searchInput");
+
 const drawingNumber = document.getElementById("drawingNumber");
 const drawingName = document.getElementById("drawingName");
+const searchInput = document.getElementById("searchInput");
+
 
 let savedFiles = JSON.parse(localStorage.getItem("sassyFiles")) || [];
 
@@ -16,13 +18,12 @@ function displayFiles(){
 
     savedFiles
     .filter(file =>
-
-        file.number.toLowerCase().includes(keyword) ||
-        file.title.toLowerCase().includes(keyword) ||
-        file.name.toLowerCase().includes(keyword)
-
+        (file.number || "").toLowerCase().includes(keyword) ||
+        (file.title || "").toLowerCase().includes(keyword) ||
+        (file.name || "").toLowerCase().includes(keyword)
     )
     .forEach((file, index) => {
+
 
         const card = document.createElement("div");
         card.className = "card";
@@ -30,7 +31,7 @@ function displayFiles(){
 
         card.innerHTML = `
             <div class="name">
-                ${file.number} ${file.title}
+                ${file.number || ""} ${file.title || ""}
             </div>
 
             <div class="type">
@@ -52,6 +53,7 @@ function displayFiles(){
 
         fileList.appendChild(card);
 
+
     });
 
 }
@@ -59,6 +61,7 @@ function displayFiles(){
 
 
 fileInput.addEventListener("change", function(){
+
 
     const files = this.files;
 
@@ -96,20 +99,13 @@ fileInput.addEventListener("change", function(){
 
 
                 localStorage.setItem(
-
                     "sassyFiles",
-
                     JSON.stringify(savedFiles)
-
                 );
 
 
                 displayFiles();
-searchInput.addEventListener("input", function(){
 
-    displayFiles();
-
-});
 
                 drawingNumber.value = "";
 
@@ -136,9 +132,7 @@ function deleteFile(index){
 
 
     const result = confirm(
-
         "この図面を削除しますか？"
-
     );
 
 
@@ -149,11 +143,8 @@ function deleteFile(index){
 
 
         localStorage.setItem(
-
             "sassyFiles",
-
             JSON.stringify(savedFiles)
-
         );
 
 
@@ -164,6 +155,14 @@ function deleteFile(index){
 
 
 }
+
+
+
+searchInput.addEventListener("input", function(){
+
+    displayFiles();
+
+});
 
 
 
