@@ -1,11 +1,13 @@
 const fileInput = document.getElementById("fileInput");
 const fileList = document.getElementById("fileList");
 
-fileInput.addEventListener("change", function () {
+let savedFiles = JSON.parse(localStorage.getItem("sassyFiles")) || [];
 
-    for (const file of this.files) {
+function displayFiles(){
 
-        const url = URL.createObjectURL(file);
+    fileList.innerHTML = "";
+
+    savedFiles.forEach(file => {
 
         const card = document.createElement("div");
         card.className = "card";
@@ -15,29 +17,32 @@ fileInput.addEventListener("change", function () {
             <div class="type">${file.type}</div>
         `;
 
-        card.onclick = () => {
-            window.open(url, "_blank");
-        };
+        fileList.appendChild(card);
 
-        fileList.prepend(card);
+    });
+
+}
+
+fileInput.addEventListener("change", function(){
+
+    const files = this.files;
+
+    for(let i = 0; i < files.length; i++){
+
+        savedFiles.push({
+            name: files[i].name,
+            type: files[i].type
+        });
+
     }
 
-    this.value = "";
+    localStorage.setItem(
+        "sassyFiles",
+        JSON.stringify(savedFiles)
+    );
+
+    displayFiles();
 
 });
-const searchInput = document.getElementById("searchInput");
 
-searchInput.addEventListener("input", function () {
-  const keyword = this.value.toLowerCase();
-  const cards = document.querySelectorAll(".card");
-
-  cards.forEach(card => {
-    const text = card.innerText.toLowerCase();
-
-    if (text.includes(keyword)) {
-      card.style.display = "";
-    } else {
-      card.style.display = "none";
-    }
-  });
-});
+displayFiles();
