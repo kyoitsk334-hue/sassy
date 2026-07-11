@@ -36,6 +36,10 @@ button{
     margin-bottom:20px;
 }
 
+input{
+    background:white;
+}
+
 .card{
     background:white;
     padding:15px;
@@ -52,9 +56,15 @@ button{
 .type{
     color:#666;
 }
+
+.card button{
+    margin-top:10px;
+    background:#ef4444;
+    font-size:14px;
+    padding:10px;
+}
 </style>
 
-<link rel="stylesheet" href="style.css">
 </head>
 
 <body>
@@ -64,6 +74,8 @@ button{
 <main>
 
 <input type="file" id="fileInput" accept=".pdf,.jpg,.jpeg,.png" hidden multiple>
+
+
 <input 
 type="text"
 id="drawingNumber"
@@ -71,45 +83,35 @@ placeholder="図面番号（例：A-001）"
 style="width:100%;padding:12px;margin-bottom:10px;border-radius:8px;border:1px solid #ccc;box-sizing:border-box;"
 >
 
+
 <input 
 type="text"
 id="drawingName"
 placeholder="図面名（例：1階平面図）"
 style="width:100%;padding:12px;margin-bottom:20px;border-radius:8px;border:1px solid #ccc;box-sizing:border-box;"
 >
-<button onclick="document.getElementById('fileInput').click()">
-<input type="file" id="fileInput" accept=".pdf,.jpg,.jpeg,.png" hidden multiple>
+
 
 <input
-  type="text"
-  id="searchInput"
-  placeholder="図面番号・ファイル名で検索..."
-  style="width:100%;padding:12px;margin:0 0 20px 0;border-radius:8px;border:1px solid #ccc;box-sizing:border-box;"
+type="text"
+id="searchInput"
+placeholder="図面番号・ファイル名で検索..."
+style="width:100%;padding:12px;margin-bottom:20px;border-radius:8px;border:1px solid #ccc;box-sizing:border-box;"
 >
+
 
 <button onclick="document.getElementById('fileInput').click()">
 ＋ 図面を追加
 </button>
 
+
 <div id="fileList"></div>
 
-<div class="card">
-<div class="name">A-001 平面図.pdf</div>
-<div class="type">PDF</div>
-</div>
-
-<div class="card">
-<div class="name">A-002 配置図.jpg</div>
-<div class="type">JPEG</div>
-</div>
-
-<div class="card">
-<div class="name">A-003 断面図.pdf</div>
-<div class="type">PDF</div>
-</div>
 
 </main>
 
+
 <script src="script.js"></script>
+
 </body>
 </html>
