@@ -70,13 +70,21 @@ fileInput.addEventListener("change", function(){
 displayFiles();
 function deleteFile(index){
 
-    savedFiles.splice(index,1);
-
-    localStorage.setItem(
-        "sassyFiles",
-        JSON.stringify(savedFiles)
+    const result = confirm(
+        "この図面を削除しますか？"
     );
 
-    displayFiles();
+    if(result){
+
+        savedFiles.splice(index,1);
+
+        localStorage.setItem(
+            "sassyFiles",
+            JSON.stringify(savedFiles)
+        );
+
+        displayFiles();
+
+    }
 
 }
