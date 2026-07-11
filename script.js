@@ -10,17 +10,17 @@ function displayFiles(){
     savedFiles.forEach((file, index) => {
 
         const card = document.createElement("div");
-        card.className = "card";
+card.className = "card";
 
-        card.innerHTML = `
-    <div class="name">${file.name}</div>
-    <div class="type">${file.type}</div>
-    <button onclick="event.stopPropagation(); deleteFile(${index})">削除</button>
+card.innerHTML = `
+<div class="name">${file.name}</div>
+<div class="type">${file.type}</div>
+<button onclick="event.stopPropagation(); deleteFile(${index})">削除</button>
+`;
 
-        card.onclick = function(){
-            window.open(file.url, "_blank");
-        };
-
+card.onclick = function(){
+    window.open(file.url, "_blank");
+};
         fileList.appendChild(card);
 
     });
