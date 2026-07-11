@@ -116,4 +116,204 @@ fileInput.addEventListener("change",function(){
     Array.from(files).forEach(file=>{
 
 
-        const
+        const reader=new FileReader();
+
+
+
+        reader.onload=function(e){
+
+
+
+            savedFiles.forEach(oldFile=>{
+
+                if(oldFile.number === drawingNumber.value){
+
+                    oldFile.latest=false;
+
+                }
+
+            });
+
+
+
+            savedFiles.push({
+
+
+                number:drawingNumber.value,
+
+
+                title:drawingName.value,
+
+
+                memo:drawingMemo.value,
+
+
+                latest:true,
+
+
+                date:new Date().toLocaleString(),
+
+
+                name:file.name,
+
+
+                type:file.type,
+
+
+                url:e.target.result
+
+
+            });
+
+
+
+            count++;
+
+
+
+            if(count===files.length){
+
+
+
+                localStorage.setItem(
+
+                    "sassyFiles",
+
+                    JSON.stringify(savedFiles)
+
+                );
+
+
+                displayFiles();
+
+
+                drawingNumber.value="";
+
+                drawingName.value="";
+
+                drawingMemo.value="";
+
+
+            }
+
+
+
+        };
+
+
+
+        reader.readAsDataURL(file);
+
+
+
+    });
+
+
+
+});
+
+
+
+
+
+function deleteFile(index){
+
+
+
+    const result=confirm(
+
+        "この図面を削除しますか？"
+
+    );
+
+
+
+    if(result){
+
+
+
+        savedFiles.splice(index,1);
+
+
+
+        localStorage.setItem(
+
+            "sassyFiles",
+
+            JSON.stringify(savedFiles)
+
+        );
+
+
+
+        displayFiles();
+
+
+
+    }
+
+
+}
+
+
+
+
+
+function editMemo(index){
+
+
+
+    const newMemo=prompt(
+
+        "メモを編集してください",
+
+        savedFiles[index].memo || ""
+
+    );
+
+
+
+    if(newMemo !== null){
+
+
+
+        savedFiles[index].memo=newMemo;
+
+
+
+        localStorage.setItem(
+
+            "sassyFiles",
+
+            JSON.stringify(savedFiles)
+
+        );
+
+
+
+        displayFiles();
+
+
+
+    }
+
+
+}
+
+
+
+
+
+searchInput.addEventListener("input",function(){
+
+
+    displayFiles();
+
+
+});
+
+
+
+
+
+displayFiles();
