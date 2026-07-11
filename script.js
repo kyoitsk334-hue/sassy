@@ -14,6 +14,14 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 
+import {
+    getStorage,
+    ref,
+    uploadBytes,
+    getDownloadURL
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+
+
 
 const firebaseConfig = {
 
@@ -31,19 +39,24 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 
+
 const db = getFirestore(app);
 
 
+const storage = getStorage(app);
 
+
+
+
+const fileInput = document.getElementById("fileInput");
 const fileList = document.getElementById("fileList");
 
 const drawingNumber = document.getElementById("drawingNumber");
 const drawingName = document.getElementById("drawingName");
 const drawingMemo = document.getElementById("drawingMemo");
+
 const searchInput = document.getElementById("searchInput");
 const latestOnly = document.getElementById("latestOnly");
-
-const fileInput = document.getElementById("fileInput");
 
 
 
@@ -56,109 +69,8 @@ let savedFiles = [];
 async function loadFiles(){
 
 
-    savedFiles = [];
+    savedFiles=[];
 
 
     const snapshot = await getDocs(
-        collection(db,"sassyFiles")
-    );
-
-
-    snapshot.forEach((doc)=>{
-
-
-        savedFiles.push({
-
-            id:doc.id,
-            ...doc.data()
-
-        });
-
-
-    });
-
-
-
-    displayFiles();
-
-
-}
-
-
-
-
-
-
-
-function displayFiles(){
-
-
-    fileList.innerHTML="";
-
-
-    const keyword = searchInput.value.toLowerCase();
-
-
-
-    savedFiles
-
-    .filter(file=>{
-
-
-        const match =
-
-        (file.number || "").toLowerCase().includes(keyword) ||
-        (file.title || "").toLowerCase().includes(keyword);
-
-
-
-        const latest =
-
-        !latestOnly.checked || file.latest;
-
-
-
-        return match && latest;
-
-
-    })
-
-
-    .forEach(file=>{
-
-
-        const card=document.createElement("div");
-
-        card.className="card";
-
-
-        card.innerHTML=`
-
-        <div class="name">
-
-        ${file.number}
-        ${file.title}
-        ${file.latest ? "★最新版":""}
-
-        </div>
-
-
-        <div class="date">
-
-        ${file.date}
-
-        </div>
-
-
-        <div class="memo">
-
-        メモ:${file.memo || ""}
-
-        </div>
-
-
-        <button>
-
-        編集
-
-       
+        collection(db,"s
