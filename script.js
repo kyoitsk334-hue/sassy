@@ -1,8 +1,11 @@
 const fileInput = document.getElementById("fileInput");
 const fileList = document.getElementById("fileList");
+
 const drawingNumber = document.getElementById("drawingNumber");
 const drawingName = document.getElementById("drawingName");
+
 let savedFiles = JSON.parse(localStorage.getItem("sassyFiles")) || [];
+
 
 function displayFiles(){
 
@@ -13,22 +16,28 @@ function displayFiles(){
         const card = document.createElement("div");
         card.className = "card";
 
+
         card.innerHTML = `
             <div class="name">
-${file.number} ${file.title}
-</div>
+                ${file.number} ${file.title}
+            </div>
 
-<div class="type">
-${file.name}
-</div>
+            <div class="type">
+                ${file.name}
+            </div>
+
             <button onclick="event.stopPropagation(); deleteFile(${index})">
                 削除
             </button>
         `;
 
+
         card.onclick = function(){
+
             window.open(file.url, "_blank");
+
         };
+
 
         fileList.appendChild(card);
 
@@ -37,68 +46,110 @@ ${file.name}
 }
 
 
+
 fileInput.addEventListener("change", function(){
 
     const files = this.files;
 
     let count = 0;
 
+
     Array.from(files).forEach(file => {
+
 
         const reader = new FileReader();
 
+
         reader.onload = function(e){
 
+
             savedFiles.push({
-    number: drawingNumber.value,
-    title: drawingName.value,
-    name: file.name,
-    type: file.type,
-    url: e.target.result
-});
+
+                number: drawingNumber.value,
+
+                title: drawingName.value,
+
+                name: file.name,
+
+                type: file.type,
+
+                url: e.target.result
+
+            });
+
 
             count++;
 
+
             if(count === files.length){
 
+
                 localStorage.setItem(
+
                     "sassyFiles",
+
                     JSON.stringify(savedFiles)
+
                 );
+
 
                 displayFiles();
 
+
+                drawingNumber.value = "";
+
+                drawingName.value = "";
+
+
             }
+
 
         };
 
+
         reader.readAsDataURL(file);
+
 
     });
 
+
 });
+
 
 
 function deleteFile(index){
 
+
     const result = confirm(
+
         "この図面を削除しますか？"
+
     );
+
 
     if(result){
 
+
         savedFiles.splice(index,1);
 
+
         localStorage.setItem(
+
             "sassyFiles",
+
             JSON.stringify(savedFiles)
+
         );
+
 
         displayFiles();
 
+
     }
 
+
 }
+
 
 
 displayFiles();
