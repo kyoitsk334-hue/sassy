@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
 
 <meta charset="UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Sassy</title>
+
 
 <style>
 
@@ -17,178 +20,164 @@ body{
 
 
 header{
+
     background:#4f46e5;
     color:white;
     padding:18px;
     text-align:center;
     font-size:28px;
     font-weight:bold;
+
 }
 
 
 main{
+
     padding:20px;
+
 }
+
+
+
+input,
+textarea{
+
+    width:100%;
+    padding:12px;
+    margin-bottom:10px;
+
+    border-radius:8px;
+    border:1px solid #ccc;
+
+    box-sizing:border-box;
+
+}
+
 
 
 button{
+
     width:100%;
     padding:15px;
+
     border:none;
     border-radius:10px;
+
     background:#4f46e5;
     color:white;
+
     font-size:18px;
+
     margin-bottom:10px;
+
 }
 
-
-input,textarea{
-    background:white;
-}
 
 
 .card{
+
     background:white;
+
     padding:15px;
+
     border-radius:12px;
+
     margin-bottom:12px;
-    box-shadow:0 2px 8px rgba(0,0,0,0.1);
+
+    box-shadow:
+    0 2px 8px rgba(0,0,0,0.1);
+
 }
+
 
 
 .name{
+
     font-size:18px;
+
     font-weight:bold;
+
 }
+
 
 
 .type{
+
     color:#666;
+
 }
+
 
 
 .date{
+
     color:#777;
+
     font-size:14px;
+
     margin-top:8px;
+
 }
+
 
 
 .memo{
+
     margin-top:8px;
+
 }
+
 
 
 .card button{
-    background:#ef4444;
+
     font-size:14px;
+
     padding:10px;
-    margin-top:10px;
+
 }
+
+
 
 </style>
 
+
 </head>
+
 
 
 <body>
 
 
 <header>
+
 Sassy
+
 </header>
+
 
 
 <main>
 
 
-<input 
+
+<input
 type="file"
 id="fileInput"
 accept=".pdf,.jpg,.jpeg,.png"
 hidden
-multiple
 >
+
 
 
 <input
 type="text"
 id="drawingNumber"
 placeholder="図面番号（例：A-001）"
-style="width:100%;padding:12px;margin-bottom:10px;border-radius:8px;border:1px solid #ccc;box-sizing:border-box;"
 >
+
 
 
 <input
 type="text"
-id="drawingName"
-placeholder="図面名（例：1階平面図）"
-style="width:100%;padding:12px;margin-bottom:10px;border-radius:8px;border:1px solid #ccc;box-sizing:border-box;"
->
-
-
-<textarea
-id="drawingMemo"
-placeholder="メモを入力..."
-style="width:100%;height:80px;padding:12px;margin-bottom:10px;border-radius:8px;border:1px solid #ccc;box-sizing:border-box;"
-></textarea>
-
-
-<input
-type="text"
-id="searchInput"
-placeholder="図面番号・ファイル名で検索..."
-style="width:100%;padding:12px;margin-bottom:10px;border-radius:8px;border:1px solid #ccc;box-sizing:border-box;"
->
-
-
-<label style="display:block;margin-bottom:20px;">
-
-<input type="checkbox" id="latestOnly">
-
-最新版のみ表示
-
-</label>
-
-
-<button onclick="document.getElementById('fileInput').click()">
-
-＋ 図面を追加
-
-</button>
-
-
-<div id="fileList"></div>
-
-
-</main>
-
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { 
-getFirestore,
-collection,
-addDoc
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-  const firebaseConfig = {
-    apiKey: "AIzaSyCpozLhjqRzC3XMHNWncGTeJ78u9AAoc9I",
-    authDomain: "sassy-fcc3d.firebaseapp.com",
-    projectId: "sassy-fcc3d",
-    storageBucket: "sassy-fcc3d.firebasestorage.app",
-    messagingSenderId: "272983594177",
-    appId: "1:272983594177:web:0ecc108116c60ab4f87040",
-    measurementId: "G-7LMKM92W44"
-  };
-
-  const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-</script>
-
-<script src="script.js"></script>
-<script src="script.js"></script>
-
-
-</body>
-
-</html>
+id="drawingName
