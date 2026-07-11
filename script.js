@@ -105,7 +105,11 @@ fileInput.addEventListener("change", function(){
 
 
                 displayFiles();
+searchInput.addEventListener("input", function(){
 
+    displayFiles();
+
+});
 
                 drawingNumber.value = "";
 
