@@ -1,4 +1,40 @@
-const fileInput = document.getElementById("fileInput");
+import { 
+    initializeApp 
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+
+import { 
+    getFirestore,
+    collection,
+    addDoc,
+    getDocs,
+    deleteDoc,
+    doc,
+    updateDoc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+
+
+const firebaseConfig = {
+
+    apiKey: "AIzaSyCpozLhjqRzC3XMHNWncGTeJ78u9AAoc9I",
+    authDomain: "sassy-fcc3d.firebaseapp.com",
+    projectId: "sassy-fcc3d",
+    storageBucket: "sassy-fcc3d.firebasestorage.app",
+    messagingSenderId: "272983594177",
+    appId: "1:272983594177:web:0ecc108116c60ab4f87040",
+    measurementId: "G-7LMKM92W44"
+
+};
+
+
+
+const app = initializeApp(firebaseConfig);
+
+const db = getFirestore(app);
+
+
+
 const fileList = document.getElementById("fileList");
 
 const drawingNumber = document.getElementById("drawingNumber");
@@ -6,352 +42,123 @@ const drawingName = document.getElementById("drawingName");
 const drawingMemo = document.getElementById("drawingMemo");
 const searchInput = document.getElementById("searchInput");
 const latestOnly = document.getElementById("latestOnly");
-const db = firebase.firestore();
 
-let savedFiles = JSON.parse(localStorage.getItem("sassyFiles")) || [];
+const fileInput = document.getElementById("fileInput");
+
+
+
+let savedFiles = [];
+
+
+
+
+
+async function loadFiles(){
+
+
+    savedFiles = [];
+
+
+    const snapshot = await getDocs(
+        collection(db,"sassyFiles")
+    );
+
+
+    snapshot.forEach((doc)=>{
+
+
+        savedFiles.push({
+
+            id:doc.id,
+            ...doc.data()
+
+        });
+
+
+    });
+
+
+
+    displayFiles();
+
+
+}
+
+
+
+
 
 
 
 function displayFiles(){
 
-    fileList.innerHTML = "";
+
+    fileList.innerHTML="";
+
 
     const keyword = searchInput.value.toLowerCase();
 
 
+
     savedFiles
-    .filter(file => {
 
-        const matchKeyword =
-            (file.number || "").toLowerCase().includes(keyword) ||
-            (file.title || "").toLowerCase().includes(keyword) ||
-            (file.name || "").toLowerCase().includes(keyword);
+    .filter(file=>{
 
 
-        const matchLatest =
-            !latestOnly.checked || file.latest;
+        const match =
+
+        (file.number || "").toLowerCase().includes(keyword) ||
+        (file.title || "").toLowerCase().includes(keyword);
 
 
-        return matchKeyword && matchLatest;
+
+        const latest =
+
+        !latestOnly.checked || file.latest;
+
+
+
+        return match && latest;
+
 
     })
-    .sort((a,b)=>{
-
-        return (b.latest ? 1 : 0) - (a.latest ? 1 : 0);
-
-    })
-    .forEach((file,index)=>{
 
 
-        const card = document.createElement("div");
-
-        card.className = "card";
+    .forEach(file=>{
 
 
-        card.innerHTML = `
+        const card=document.createElement("div");
+
+        card.className="card";
+
+
+        card.innerHTML=`
 
         <div class="name">
 
-        ${file.number || ""}
-        ${file.title || ""}
-        ${file.latest ? " ★最新版" : ""}
-
-        </div>
-
-
-        <div class="type">
-
-        ${file.name}
+        ${file.number}
+        ${file.title}
+        ${file.latest ? "★最新版":""}
 
         </div>
 
 
         <div class="date">
 
-        追加日：${file.date || ""}
+        ${file.date}
 
         </div>
 
 
         <div class="memo">
 
-        メモ：${file.memo || ""}
+        メモ:${file.memo || ""}
 
         </div>
 
 
-        <button onclick="event.stopPropagation(); editMemo(${index})">
+        <button>
 
         編集
 
-        </button>
-
-
-        <button onclick="event.stopPropagation(); deleteFile(${index})">
-
-        削除
-
-        </button>
-
-        `;
-
-
-        card.onclick=function(){
-
-            window.open(file.url,"_blank");
-
-        };
-
-
-        fileList.appendChild(card);
-
-
-    });
-
-
-}
-
-
-
-
-
-fileInput.addEventListener("change",function(){
-
-
-    const duplicate = savedFiles.some(file =>
-        file.number === drawingNumber.value
-    );
-
-
-    if(duplicate){
-
-
-        const result = confirm(
-            "同じ図面番号があります。\n最新版として追加しますか？"
-        );
-
-
-        if(!result){
-
-            this.value = "";
-
-            return;
-
-        }
-
-    }
-
-
-
-    const files=this.files;
-
-
-    let count=0;
-
-
-
-    Array.from(files).forEach(file=>{
-
-
-        const reader=new FileReader();
-
-
-
-        reader.onload=function(e){
-
-
-
-            savedFiles.forEach(oldFile=>{
-
-
-                if(oldFile.number === drawingNumber.value){
-
-                    oldFile.latest=false;
-
-                }
-
-
-            });
-
-
-
-
-            savedFiles.push({
-
-
-                number:drawingNumber.value,
-
-
-                title:drawingName.value,
-
-
-                memo:drawingMemo.value,
-
-
-                latest:true,
-
-
-                date:new Date().toLocaleString(),
-
-
-                name:file.name,
-
-
-                type:file.type,
-
-
-                url:e.target.result
-
-
-            });
-
-
-
-
-            count++;
-
-
-
-
-            if(count===files.length){
-
-
-
-                localStorage.setItem(
-
-                    "sassyFiles",
-
-                    JSON.stringify(savedFiles)
-
-                );
-
-
-
-                displayFiles();
-
-
-
-                drawingNumber.value="";
-
-                drawingName.value="";
-
-                drawingMemo.value="";
-
-            }
-
-
-
-        };
-
-
-
-        reader.readAsDataURL(file);
-
-
-
-    });
-
-
-
-});
-
-
-
-
-
-
-function editMemo(index){
-
-
-
-    const newMemo = prompt(
-
-        "メモを編集してください",
-
-        savedFiles[index].memo || ""
-
-    );
-
-
-
-    if(newMemo !== null){
-
-
-        savedFiles[index].memo = newMemo;
-
-
-        Firestoreへ保存
-
-
-        displayFiles();
-
-
-    }
-
-
-}
-
-
-
-
-
-
-function deleteFile(index){
-
-
-
-    const result = confirm(
-
-        "この図面を削除しますか？"
-
-    );
-
-
-
-    if(result){
-
-
-        savedFiles.splice(index,1);
-
-
-        localStorage.setItem(
-
-            "sassyFiles",
-
-            JSON.stringify(savedFiles)
-
-        );
-
-
-        displayFiles();
-
-
-    }
-
-
-}
-
-
-
-
-
-
-searchInput.addEventListener("input",function(){
-
-    displayFiles();
-
-});
-
-
-
-latestOnly.addEventListener("change",function(){
-
-    displayFiles();
-
-});
-
-
-
-
-
-displayFiles();
+       
