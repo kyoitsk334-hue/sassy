@@ -166,7 +166,11 @@ style="width:100%;padding:12px;margin-bottom:10px;border-radius:8px;border:1px s
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-
+import { 
+getFirestore,
+collection,
+addDoc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
   const firebaseConfig = {
     apiKey: "AIzaSyCpozLhjqRzC3XMHNWncGTeJ78u9AAoc9I",
     authDomain: "sassy-fcc3d.firebaseapp.com",
