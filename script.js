@@ -6,7 +6,7 @@ const drawingName = document.getElementById("drawingName");
 const drawingMemo = document.getElementById("drawingMemo");
 const searchInput = document.getElementById("searchInput");
 const latestOnly = document.getElementById("latestOnly");
-
+const db = firebase.firestore();
 
 let savedFiles = JSON.parse(localStorage.getItem("sassyFiles")) || [];
 
