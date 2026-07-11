@@ -5,6 +5,7 @@ const drawingNumber = document.getElementById("drawingNumber");
 const drawingName = document.getElementById("drawingName");
 const drawingMemo = document.getElementById("drawingMemo");
 const searchInput = document.getElementById("searchInput");
+const latestOnly = document.getElementById("latestOnly");
 
 
 let savedFiles = JSON.parse(localStorage.getItem("sassyFiles")) || [];
@@ -19,11 +20,21 @@ function displayFiles(){
 
 
     savedFiles
-    .filter(file =>
-        (file.number || "").toLowerCase().includes(keyword) ||
-        (file.title || "").toLowerCase().includes(keyword) ||
-        (file.name || "").toLowerCase().includes(keyword)
-    )
+    .filter(file => {
+
+        const matchKeyword =
+            (file.number || "").toLowerCase().includes(keyword) ||
+            (file.title || "").toLowerCase().includes(keyword) ||
+            (file.name || "").toLowerCase().includes(keyword);
+
+
+        const matchLatest =
+            !latestOnly.checked || file.latest;
+
+
+        return matchKeyword && matchLatest;
+
+    })
     .sort((a,b)=>{
 
         return (b.latest ? 1 : 0) - (a.latest ? 1 : 0);
@@ -41,9 +52,9 @@ function displayFiles(){
 
         <div class="name">
 
-        ${file.number || ""} 
+        ${file.number || ""}
         ${file.title || ""}
-        ${file.latest ? "★最新版" : ""}
+        ${file.latest ? " ★最新版" : ""}
 
         </div>
 
@@ -82,7 +93,6 @@ function displayFiles(){
 
         </button>
 
-
         `;
 
 
@@ -104,10 +114,37 @@ function displayFiles(){
 
 
 
+
 fileInput.addEventListener("change",function(){
 
 
+    const duplicate = savedFiles.some(file =>
+        file.number === drawingNumber.value
+    );
+
+
+    if(duplicate){
+
+
+        const result = confirm(
+            "同じ図面番号があります。\n最新版として追加しますか？"
+        );
+
+
+        if(!result){
+
+            this.value = "";
+
+            return;
+
+        }
+
+    }
+
+
+
     const files=this.files;
+
 
     let count=0;
 
@@ -126,13 +163,16 @@ fileInput.addEventListener("change",function(){
 
             savedFiles.forEach(oldFile=>{
 
+
                 if(oldFile.number === drawingNumber.value){
 
                     oldFile.latest=false;
 
                 }
 
+
             });
+
 
 
 
@@ -167,7 +207,9 @@ fileInput.addEventListener("change",function(){
 
 
 
+
             count++;
+
 
 
 
@@ -184,7 +226,9 @@ fileInput.addEventListener("change",function(){
                 );
 
 
+
                 displayFiles();
+
 
 
                 drawingNumber.value="";
@@ -192,7 +236,6 @@ fileInput.addEventListener("change",function(){
                 drawingName.value="";
 
                 drawingMemo.value="";
-
 
             }
 
@@ -216,54 +259,12 @@ fileInput.addEventListener("change",function(){
 
 
 
-function deleteFile(index){
-
-
-
-    const result=confirm(
-
-        "この図面を削除しますか？"
-
-    );
-
-
-
-    if(result){
-
-
-
-        savedFiles.splice(index,1);
-
-
-
-        localStorage.setItem(
-
-            "sassyFiles",
-
-            JSON.stringify(savedFiles)
-
-        );
-
-
-
-        displayFiles();
-
-
-
-    }
-
-
-}
-
-
-
-
 
 function editMemo(index){
 
 
 
-    const newMemo=prompt(
+    const newMemo = prompt(
 
         "メモを編集してください",
 
@@ -276,9 +277,7 @@ function editMemo(index){
     if(newMemo !== null){
 
 
-
-        savedFiles[index].memo=newMemo;
-
+        savedFiles[index].memo = newMemo;
 
 
         localStorage.setItem(
@@ -290,9 +289,7 @@ function editMemo(index){
         );
 
 
-
         displayFiles();
-
 
 
     }
@@ -304,11 +301,58 @@ function editMemo(index){
 
 
 
-searchInput.addEventListener("input",function(){
 
+function deleteFile(index){
+
+
+
+    const result = confirm(
+
+        "この図面を削除しますか？"
+
+    );
+
+
+
+    if(result){
+
+
+        savedFiles.splice(index,1);
+
+
+        localStorage.setItem(
+
+            "sassyFiles",
+
+            JSON.stringify(savedFiles)
+
+        );
+
+
+        displayFiles();
+
+
+    }
+
+
+}
+
+
+
+
+
+
+searchInput.addEventListener("input",function(){
 
     displayFiles();
 
+});
+
+
+
+latestOnly.addEventListener("change",function(){
+
+    displayFiles();
 
 });
 
