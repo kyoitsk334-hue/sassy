@@ -1,6 +1,6 @@
 const fileInput = document.getElementById("fileInput");
 const fileList = document.getElementById("fileList");
-
+const searchInput = document.getElementById("searchInput");
 const drawingNumber = document.getElementById("drawingNumber");
 const drawingName = document.getElementById("drawingName");
 
