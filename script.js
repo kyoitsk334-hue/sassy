@@ -7,7 +7,7 @@ function displayFiles(){
 
     fileList.innerHTML = "";
 
-    savedFiles.forEach(file => {
+    savedFiles.forEach((file, index) => {
 
         const card = document.createElement("div");
         card.className = "card";
@@ -17,32 +17,54 @@ function displayFiles(){
             <div class="type">${file.type}</div>
         `;
 
+        card.onclick = function(){
+            window.open(file.url, "_blank");
+        };
+
         fileList.appendChild(card);
 
     });
 
 }
 
+
 fileInput.addEventListener("change", function(){
 
     const files = this.files;
 
-    for(let i = 0; i < files.length; i++){
+    let count = 0;
 
-        savedFiles.push({
-            name: files[i].name,
-            type: files[i].type
-        });
+    Array.from(files).forEach(file => {
 
-    }
+        const reader = new FileReader();
 
-    localStorage.setItem(
-        "sassyFiles",
-        JSON.stringify(savedFiles)
-    );
+        reader.onload = function(e){
 
-    displayFiles();
+            savedFiles.push({
+                name: file.name,
+                type: file.type,
+                url: e.target.result
+            });
+
+            count++;
+
+            if(count === files.length){
+
+                localStorage.setItem(
+                    "sassyFiles",
+                    JSON.stringify(savedFiles)
+                );
+
+                displayFiles();
+            }
+
+        };
+
+        reader.readAsDataURL(file);
+
+    });
 
 });
+
 
 displayFiles();
