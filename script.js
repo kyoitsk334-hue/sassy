@@ -14,8 +14,13 @@ function displayFiles(){
         card.className = "card";
 
         card.innerHTML = `
-            <div class="name">${file.name}</div>
-            <div class="type">${file.type}</div>
+            <div class="name">
+${file.number} ${file.title}
+</div>
+
+<div class="type">
+${file.name}
+</div>
             <button onclick="event.stopPropagation(); deleteFile(${index})">
                 削除
             </button>
