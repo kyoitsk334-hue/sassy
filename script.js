@@ -280,13 +280,7 @@ function editMemo(index){
         savedFiles[index].memo = newMemo;
 
 
-        localStorage.setItem(
-
-            "sassyFiles",
-
-            JSON.stringify(savedFiles)
-
-        );
+        Firestoreへ保存
 
 
         displayFiles();
