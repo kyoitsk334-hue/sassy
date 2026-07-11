@@ -3,10 +3,12 @@ const fileList = document.getElementById("fileList");
 
 const drawingNumber = document.getElementById("drawingNumber");
 const drawingName = document.getElementById("drawingName");
+const drawingMemo = document.getElementById("drawingMemo");
 const searchInput = document.getElementById("searchInput");
 
 
 let savedFiles = JSON.parse(localStorage.getItem("sassyFiles")) || [];
+
 
 
 function displayFiles(){
@@ -22,31 +24,71 @@ function displayFiles(){
         (file.title || "").toLowerCase().includes(keyword) ||
         (file.name || "").toLowerCase().includes(keyword)
     )
-    .forEach((file, index) => {
+    .sort((a,b)=>{
+
+        return (b.latest ? 1 : 0) - (a.latest ? 1 : 0);
+
+    })
+    .forEach((file,index)=>{
 
 
         const card = document.createElement("div");
+
         card.className = "card";
 
 
         card.innerHTML = `
-            <div class="name">
-                ${file.number || ""} ${file.title || ""}
-            </div>
 
-            <div class="type">
-                ${file.name}
-            </div>
+        <div class="name">
 
-            <button onclick="event.stopPropagation(); deleteFile(${index})">
-                削除
-            </button>
+        ${file.number || ""} 
+        ${file.title || ""}
+        ${file.latest ? "★最新版" : ""}
+
+        </div>
+
+
+        <div class="type">
+
+        ${file.name}
+
+        </div>
+
+
+        <div class="date">
+
+        追加日：${file.date || ""}
+
+        </div>
+
+
+        <div class="memo">
+
+        メモ：${file.memo || ""}
+
+        </div>
+
+
+        <button onclick="event.stopPropagation(); editMemo(${index})">
+
+        編集
+
+        </button>
+
+
+        <button onclick="event.stopPropagation(); deleteFile(${index})">
+
+        削除
+
+        </button>
+
+
         `;
 
 
-        card.onclick = function(){
+        card.onclick=function(){
 
-            window.open(file.url, "_blank");
+            window.open(file.url,"_blank");
 
         };
 
@@ -56,114 +98,22 @@ function displayFiles(){
 
     });
 
-}
-
-
-
-fileInput.addEventListener("change", function(){
-
-
-    const files = this.files;
-
-    let count = 0;
-
-
-    Array.from(files).forEach(file => {
-
-
-        const reader = new FileReader();
-
-
-        reader.onload = function(e){
-
-
-            savedFiles.push({
-
-                number: drawingNumber.value,
-
-                title: drawingName.value,
-
-                name: file.name,
-
-                type: file.type,
-
-                url: e.target.result
-
-            });
-
-
-            count++;
-
-
-            if(count === files.length){
-
-
-                localStorage.setItem(
-                    "sassyFiles",
-                    JSON.stringify(savedFiles)
-                );
-
-
-                displayFiles();
-
-
-                drawingNumber.value = "";
-
-                drawingName.value = "";
-
-
-            }
-
-
-        };
-
-
-        reader.readAsDataURL(file);
-
-
-    });
-
-
-});
-
-
-
-function deleteFile(index){
-
-
-    const result = confirm(
-        "この図面を削除しますか？"
-    );
-
-
-    if(result){
-
-
-        savedFiles.splice(index,1);
-
-
-        localStorage.setItem(
-            "sassyFiles",
-            JSON.stringify(savedFiles)
-        );
-
-
-        displayFiles();
-
-
-    }
-
 
 }
 
 
 
-searchInput.addEventListener("input", function(){
 
-    displayFiles();
-
-});
+fileInput.addEventListener("change",function(){
 
 
+    const files=this.files;
 
-displayFiles();
+    let count=0;
+
+
+
+    Array.from(files).forEach(file=>{
+
+
+        const
