@@ -11,7 +11,18 @@ function displayFiles(){
 
     fileList.innerHTML = "";
 
-    savedFiles.forEach((file, index) => {
+    const keyword = searchInput.value.toLowerCase();
+
+
+    savedFiles
+    .filter(file =>
+
+        file.number.toLowerCase().includes(keyword) ||
+        file.title.toLowerCase().includes(keyword) ||
+        file.name.toLowerCase().includes(keyword)
+
+    )
+    .forEach((file, index) => {
 
         const card = document.createElement("div");
         card.className = "card";
