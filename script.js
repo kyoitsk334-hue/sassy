@@ -69,3 +69,15 @@ fileInput.addEventListener("change", function(){
 
 
 displayFiles();
+function deleteFile(index){
+
+    savedFiles.splice(index,1);
+
+    localStorage.setItem(
+        "sassyFiles",
+        JSON.stringify(savedFiles)
+    );
+
+    displayFiles();
+
+}
