@@ -13,10 +13,9 @@ function displayFiles(){
         card.className = "card";
 
         card.innerHTML = `
-    <div class="name">${file.name}</div>
-    <div class="type">${file.type}</div>
-    <button onclick="deleteFile(${index})">削除</button>
-`;
+            <div class="name">${file.name}</div>
+            <div class="type">${file.type}</div>
+        `;
 
         card.onclick = function(){
             window.open(file.url, "_blank");
@@ -69,15 +68,3 @@ fileInput.addEventListener("change", function(){
 
 
 displayFiles();
-function deleteFile(index){
-
-    savedFiles.splice(index,1);
-
-    localStorage.setItem(
-        "sassyFiles",
-        JSON.stringify(savedFiles)
-    );
-
-    displayFiles();
-
-}
