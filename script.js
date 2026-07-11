@@ -1,6 +1,7 @@
 const fileInput = document.getElementById("fileInput");
 const fileList = document.getElementById("fileList");
-
+const drawingNumber = document.getElementById("drawingNumber");
+const drawingName = document.getElementById("drawingName");
 let savedFiles = JSON.parse(localStorage.getItem("sassyFiles")) || [];
 
 function displayFiles(){
