@@ -45,10 +45,12 @@ fileInput.addEventListener("change", function(){
         reader.onload = function(e){
 
             savedFiles.push({
-                name: file.name,
-                type: file.type,
-                url: e.target.result
-            });
+    number: drawingNumber.value,
+    title: drawingName.value,
+    name: file.name,
+    type: file.type,
+    url: e.target.result
+});
 
             count++;
 
