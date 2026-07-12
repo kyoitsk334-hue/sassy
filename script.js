@@ -196,3 +196,41 @@ fileInput.addEventListener("change", async () => {
     await loadFiles();
 
 });
+async function deleteFile(file) {
+
+    if (!confirm("削除しますか？")) return;
+
+    await deleteDoc(doc(db, "sassyFiles", file.id));
+
+    if (file.storagePath) {
+        const fileRef = ref(storage, file.storagePath);
+        await deleteObject(fileRef);
+    }
+
+    await loadFiles();
+}
+
+async function editMemo(id) {
+
+    const target = savedFiles.find(file => file.id === id);
+
+    if (!target) return;
+
+    const memo = prompt("メモを編集", target.memo || "");
+
+    if (memo === null) return;
+
+    await updateDoc(
+        doc(db, "sassyFiles", id),
+        {
+            memo: memo
+        }
+    );
+
+    await loadFiles();
+}
+
+searchInput.addEventListener("input", displayFiles);
+latestOnly.addEventListener("change", displayFiles);
+
+loadFiles();
