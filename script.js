@@ -1,419 +1,425 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-
-import {
-    getFirestore,
-    collection,
-    getDocs,
-    addDoc,
-    updateDoc,
-    deleteDoc,
-    doc
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-import {
-    getStorage,
-    ref,
-    uploadBytes,
-    getDownloadURL,
-    deleteObject
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
-
-
-const firebaseConfig = {
-    apiKey: "AIzaSyCpozLhjqRzC3XMHNWncGTeJ78u9AAoc9I",
-    authDomain: "sassy-fcc3d.firebaseapp.com",
-    projectId: "sassy-fcc3d",
-    storageBucket: "sassy-fcc3d.firebasestorage.app",
-    messagingSenderId: "272983594177",
-    appId: "1:272983594177:web:0ecc108116c60ab4f87040"
-};
-
-
-const app = initializeApp(firebaseConfig);
-
-const db = getFirestore(app);
-const storage = getStorage(app);
+// ===============================
+// Sassy デモ版
+// 安全書類管理
+// localStorage保存
+// ===============================
 
 
 // HTML取得
 
 const fileInput = document.getElementById("fileInput");
-const fileList = document.getElementById("fileList");
 
 const projectName = document.getElementById("projectName");
+
 const categoryName = document.getElementById("categoryName");
+
 const documentType = document.getElementById("documentType");
+
 const documentName = document.getElementById("documentName");
+
 const documentMemo = document.getElementById("documentMemo");
 
+const fileList = document.getElementById("fileList");
+
 const searchInput = document.getElementById("searchInput");
+
 const latestOnly = document.getElementById("latestOnly");
 
 
-// データ
+// 保存データ
 
-let savedFiles = [];
+let savedFiles =
+JSON.parse(localStorage.getItem("sassyFiles"))
+|| [];
 
-let openedProjects = {};
 
 
-// =========================
-// 一覧表示
-// =========================
+// ===============================
+// ファイル追加
+// ===============================
 
-function displayFiles(){
-
-    fileList.innerHTML = "";
-
-    const keyword =
-        searchInput.value.toLowerCase();
-
-
-    const projects = {};
-
-
-    savedFiles.forEach(file=>{
-
-        const project =
-            file.project || "工事名未設定";
-
-
-        const match =
-            (file.project || "").toLowerCase().includes(keyword) ||
-            (file.number || "").toLowerCase().includes(keyword) ||
-            (file.title || "").toLowerCase().includes(keyword) ||
-            (file.fileName || "").toLowerCase().includes(keyword);
-
-
-        const latest =
-            !latestOnly.checked || file.latest;
-
-
-        if(!(match && latest)) return;
-
-
-        if(!projects[project]){
-            projects[project] = [];
-        }
-
-
-        projects[project].push(file);
-
-    });
-
-
-    Object.keys(projects).forEach(project=>{
-
-
-        const folder =
-            document.createElement("div");
-
-
-        folder.className="card";
-
-
-        folder.innerHTML = `
-        <div class="name">
-        ${openedProjects[project] ? "📂":"📁"}
-        ${project}
-        </div>
-        `;
-
-
-        folder.onclick=()=>{
-
-            openedProjects[project]
-            =
-            !openedProjects[project];
-
-            displayFiles();
-
-        };
-
-
-        fileList.appendChild(folder);
-
-
-
-        if(!openedProjects[project])
-            return;
-
-
-
-        projects[project].forEach(file=>{
-
-            const card =
-                document.createElement("div");
-
-
-            card.className="card";
-
-
-            card.style.marginLeft="25px";
-
-
-            card.innerHTML=`
-
-            <div class="name">
-            ${file.number}
-            ${file.latest ? " ★最新版":""}
-            </div>
-
-            <div>
-            ${file.title || ""}
-            </div>
-
-            <div>
-            ${file.fileName}
-            </div>
-
-            <div>
-            ${file.memo || ""}
-            </div>
-
-            <div>
-            ${file.date}
-            </div>
-
-
-            <button class="edit">
-            編集
-            </button>
-
-            <button class="delete">
-            削除
-            </button>
-
-            `;
-
-
-            card.onclick=()=>{
-
-                if(file.url){
-
-                    window.open(
-                        file.url,
-                        "_blank"
-                    );
-
-                }
-
-            };
-
-
-            fileList.appendChild(card);
-
-
-        });
-
-
-    });
-
-
-}
-// =========================
-// Firestore読み込み
-// =========================
-
-async function loadFiles(){
-
-    savedFiles = [];
-
-
-    const snapshot =
-        await getDocs(
-            collection(db,"sassyFiles")
-        );
-
-
-    snapshot.forEach(docSnap=>{
-
-        savedFiles.push({
-
-            id:docSnap.id,
-
-            ...docSnap.data()
-
-        });
-
-    });
-
-
-    displayFiles();
-
-}
-
-
-
-// =========================
-// 図面追加
-// =========================
 
 fileInput.addEventListener(
 "change",
-async()=>{
+function(){
+
+const file = fileInput.files[0];
+
+if(!file) return;
 
 
-    const file =
-        fileInput.files[0];
+// 入力チェック
+
+if(!projectName.value.trim()){
+
+alert("工事名を入力してください");
+
+return;
+
+}
 
 
-    if(!file) return;
+if(!categoryName.value.trim()){
+
+alert("工種を入力してください");
+
+return;
+
+}
 
 
+if(!documentName.value.trim()){
 
-    if(!projectName.value.trim()){
+alert("資料名を入力してください");
 
-        alert("工事名を入力してください");
+return;
 
-        return;
-
-    }
-
-
-    if(!drawingNumber.value.trim()){
-
-        alert("図面番号を入力してください");
-
-        return;
-
-    }
-
-
-
-    try{
-
-
-        const storageRef =
-            ref(
-                storage,
-                `drawings/${Date.now()}_${file.name}`
-            );
+}
 
 
 
-        await uploadBytes(
-            storageRef,
-            file
-        );
+// ファイル読み込み
+
+const reader = new FileReader();
+
+
+reader.onload = function(e){
+
+
+const data = {
+
+
+id: Date.now(),
+
+
+project:
+projectName.value.trim(),
+
+
+category:
+categoryName.value.trim(),
+
+
+type:
+documentType.value,
+
+
+title:
+documentName.value.trim(),
+
+
+memo:
+documentMemo.value.trim(),
+
+
+fileName:
+file.name,
+
+
+fileData:
+e.target.result,
+
+
+date:
+new Date().toLocaleString("ja-JP"),
+
+
+latest:true
+
+
+};
+
+
+// 保存
+
+savedFiles.push(data);
+
+
+localStorage.setItem(
+"sassyFiles",
+JSON.stringify(savedFiles)
+);
+
+
+// 初期化
+
+documentName.value="";
+documentMemo.value="";
+fileInput.value="";
 
 
 
-        const url =
-            await getDownloadURL(
-                storageRef
-            );
+alert("保存しました！");
+
+
+// 表示更新
+
+displayFiles();
+
+
+};
+
+
+reader.readAsDataURL(file);
+
+
+});
+// ===============================
+// 一覧表示
+// ===============================
+
+function displayFiles(){
+
+fileList.innerHTML = "";
+
+
+const keyword =
+searchInput.value.toLowerCase();
 
 
 
-        await addDoc(
-            collection(db,"sassyFiles"),
-            {
-
-                project:
-                projectName.value.trim(),
-
-                category: categoryName.value.trim(),
-type: documentType.value,
-title: documentName.value.trim(),
-memo: documentMemo.value.trim(),
+const projects = {};
 
 
-                fileName:
-                file.name,
+// 工事ごとにまとめる
+
+savedFiles.forEach(file=>{
 
 
-                url:url,
+const match =
 
+file.project.toLowerCase().includes(keyword) ||
 
-                storagePath:
-                storageRef.fullPath,
+file.category.toLowerCase().includes(keyword) ||
 
+file.type.toLowerCase().includes(keyword) ||
 
-                latest:true,
-
-
-                date:
-                new Date()
-                .toLocaleString("ja-JP")
-
-            }
-        );
+file.title.toLowerCase().includes(keyword);
 
 
 
-        alert("保存しました！");
+const latest =
+
+!latestOnly.checked || file.latest;
 
 
 
-        drawingNumber.value="";
-        drawingName.value="";
-        drawingMemo.value="";
-        fileInput.value="";
+if(!match || !latest) return;
 
 
 
-        loadFiles();
+if(!projects[file.project]){
+
+projects[file.project]={};
+
+}
 
 
+if(!projects[file.project][file.category]){
 
-    }catch(error){
+projects[file.project][file.category]=[];
 
-        console.error(error);
+}
 
-        alert("保存失敗しました");
 
-    }
-
+projects[file.project][file.category].push(file);
 
 
 });
 
 
 
-// =========================
+// 表示
+
+Object.keys(projects).forEach(project=>{
+
+
+const projectBox =
+document.createElement("div");
+
+
+projectBox.className="card";
+
+
+projectBox.innerHTML=
+`
+<div class="name">
+🏗 ${project}
+</div>
+`;
+
+
+
+fileList.appendChild(projectBox);
+
+
+
+Object.keys(projects[project]).forEach(category=>{
+
+
+const categoryBox =
+document.createElement("div");
+
+
+categoryBox.className="card";
+
+
+categoryBox.style.marginLeft="20px";
+
+
+
+categoryBox.innerHTML=
+`
+<div class="name">
+📁 ${category}
+</div>
+`;
+
+
+
+fileList.appendChild(categoryBox);
+
+
+
+
+projects[project][category].forEach(file=>{
+
+
+const card =
+document.createElement("div");
+
+
+
+card.className="card";
+
+
+card.style.marginLeft="40px";
+
+
+
+card.innerHTML=
+`
+
+<div class="name">
+
+📄 ${file.type}
+
+</div>
+
+
+<div>
+
+${file.title}
+
+</div>
+
+
+<div class="type">
+
+${file.fileName}
+
+</div>
+
+
+<div class="date">
+
+${file.date}
+
+</div>
+
+
+<button class="open">
+
+開く
+
+</button>
+
+
+<button class="delete">
+
+削除
+
+</button>
+
+
+`;
+
+
+
+// 開く
+
+card.querySelector(".open")
+.onclick=function(e){
+
+e.stopPropagation();
+
+
+const win =
+window.open();
+
+
+win.location.href =
+file.fileData;
+
+
+};
+
+
+
 // 削除
-// =========================
 
-async function deleteFile(file){
+card.querySelector(".delete")
+.onclick=function(e){
 
-
-    if(!confirm("削除しますか？"))
-        return;
+e.stopPropagation();
 
 
-
-    await deleteDoc(
-        doc(
-            db,
-            "sassyFiles",
-            file.id
-        )
-    );
+if(confirm("削除しますか？")){
 
 
-
-    if(file.storagePath){
-
-        await deleteObject(
-            ref(
-                storage,
-                file.storagePath
-            )
-        );
-
-    }
+savedFiles =
+savedFiles.filter(
+x=>x.id !== file.id
+);
 
 
-    loadFiles();
+localStorage.setItem(
+"sassyFiles",
+JSON.stringify(savedFiles)
+);
+
+
+displayFiles();
+
+
+}
+
+
+};
+
+
+
+fileList.appendChild(card);
+
+
+
+});
+
+
+});
+
+
+});
+
 
 }
 
 
 
-// =========================
+// ===============================
 // 検索
-// =========================
+// ===============================
+
 
 searchInput.addEventListener(
 "input",
@@ -428,8 +434,6 @@ displayFiles
 
 
 
-// =========================
-// 起動
-// =========================
+// 初回表示
 
-loadFiles();
+displayFiles();
