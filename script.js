@@ -1,66 +1,65 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
 import {
-  getFirestore,
-  collection,
-  addDoc,
-  getDocs,
-  deleteDoc,
-  doc,
-  updateDoc
+    getFirestore,
+    collection,
+    getDocs,
+    addDoc,
+    updateDoc,
+    deleteDoc,
+    doc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 import {
-  getStorage,
-  ref,
-  uploadBytes,
-  getDownloadURL,
-  deleteObject
+    getStorage,
+    ref,
+    uploadBytes,
+    getDownloadURL,
+    deleteObject
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCpozLhjqRzC3XMHNWncGTeJ78u9AAoc9I",
-  authDomain: "sassy-fcc3d.firebaseapp.com",
-  projectId: "sassy-fcc3d",
-  storageBucket: "sassy-fcc3d.firebasestorage.app",
-  messagingSenderId: "272983594177",
-  appId: "1:272983594177:web:0ecc108116c60ab4f87040"
+    apiKey: "AIzaSyCpozLhjqRzC3XMHNWncGTeJ78u9AAoc9I",
+    authDomain: "sassy-fcc3d.firebaseapp.com",
+    projectId: "sassy-fcc3d",
+    storageBucket: "sassy-fcc3d.firebasestorage.app",
+    messagingSenderId: "272983594177",
+    appId: "1:272983594177:web:0ecc108116c60ab4f87040"
 };
 
 const app = initializeApp(firebaseConfig);
+
 const db = getFirestore(app);
 const storage = getStorage(app);
 
+// ===== HTML取得 =====
+
 const fileInput = document.getElementById("fileInput");
 const fileList = document.getElementById("fileList");
+
+const projectName = document.getElementById("projectName");
 const drawingNumber = document.getElementById("drawingNumber");
 const drawingName = document.getElementById("drawingName");
 const drawingMemo = document.getElementById("drawingMemo");
+
 const searchInput = document.getElementById("searchInput");
 const latestOnly = document.getElementById("latestOnly");
 
+// ===== データ =====
+
 let savedFiles = [];
+
+// フォルダの開閉状態
+let openedProjects = {};
+
+// =========================
+// Firestore読込み
+// =========================
+
 async function loadFiles() {
-    savedFiles = [];
-
-    const snapshot = await getDocs(collection(db, "sassyFiles"));
-
-    snapshot.forEach(item => {
-        savedFiles.push({
-            id: item.id,
-            ...item.data()
-        });
-    });
-
-    // 図面番号順 → 新しい日付順
-    savedFiles.sort((a, b) => {
-        const num = (a.number || "").localeCompare(b.number || "", "ja");
-        if (num !== 0) return num;
-        return (b.date || "").localeCompare(a.date || "");
-    });
-
-    displayFiles();
-}
+// =========================
+// 一覧表示
+// =========================
 
 function displayFiles() {
 
@@ -68,9 +67,15 @@ function displayFiles() {
 
     const keyword = searchInput.value.toLowerCase();
 
-    const list = savedFiles.filter(file => {
+    // 工事ごとにまとめる
+    const projects = {};
+
+    savedFiles.forEach(file => {
+
+        const project = file.project || "工事名未設定";
 
         const match =
+            (file.project || "").toLowerCase().includes(keyword) ||
             (file.number || "").toLowerCase().includes(keyword) ||
             (file.title || "").toLowerCase().includes(keyword) ||
             (file.fileName || "").toLowerCase().includes(keyword);
@@ -78,68 +83,179 @@ function displayFiles() {
         const latest =
             !latestOnly.checked || file.latest;
 
-        return match && latest;
+        if (!(match && latest)) return;
+
+        if (!projects[project]) {
+            projects[project] = [];
+        }
+
+        projects[project].push(file);
 
     });
 
-    list.forEach(file => {
+    // フォルダ表示
+    Object.keys(projects).forEach(project => {
 
-        const card = document.createElement("div");
+        const folder = document.createElement("div");
 
-        card.className = "card";
+        folder.className = "card";
 
-        card.innerHTML = `
+        folder.style.cursor = "pointer";
+
+        folder.innerHTML = `
             <div class="name">
-                ${file.number}
-                ${file.latest ? " ★最新版" : ""}
+                ${openedProjects[project] ? "📂" : "📁"}
+                ${project}
             </div>
-
-            <div>${file.title}</div>
-
-            <div class="type">
-                ${file.fileName}
-            </div>
-
-            <div class="memo">
-                ${file.memo || ""}
-            </div>
-
-            <div class="date">
-                ${file.date}
-            </div>
-
-            <button class="edit">編集</button>
-            <button class="delete">削除</button>
         `;
 
-        card.onclick = () => {
-            if (file.url) {
-                window.open(file.url, "_blank");
-            }
+        folder.onclick = () => {
+
+            openedProjects[project] =
+                !openedProjects[project];
+
+            displayFiles();
+
         };
 
-        card.querySelector(".edit").onclick = e => {
-            e.stopPropagation();
-            editMemo(file.id);
-        };
+        fileList.appendChild(folder);
 
-        card.querySelector(".delete").onclick = e => {
-            e.stopPropagation();
-            deleteFile(file);
-        };
+        // 閉じている時は図面を表示しない
+        if (!openedProjects[project]) return;
 
-        fileList.appendChild(card);
+        projects[project].forEach(file => {
+
+            const card =
+                document.createElement("div");
+
+            card.className = "card";
+
+            card.style.marginLeft = "25px";
+
+            card.innerHTML = `
+                <div class="name">
+                    ${file.number}
+                    ${file.latest ? " ★最新版" : ""}
+                </div>
+
+                <div>${file.title}</div>
+
+                <div class="type">
+                    ${file.fileName}
+                </div>
+
+                <div class="memo">
+                    ${file.memo || ""}
+                </div>
+
+                <div class="date">
+                    ${file.date}
+                </div>
+
+                <button class="edit">編集</button>
+
+                <button class="delete">削除</button>
+            `;
+
+            card.onclick = () => {
+
+                if (file.url) {
+
+                    window.open(
+                        file.url,
+                        "_blank"
+                    );
+
+                }
+
+            };
+
+            card.querySelector(".edit").onclick = e => {
+
+                e.stopPropagation();
+
+                editMemo(file.id);
+
+            };
+
+            card.querySelector(".delete").onclick = e => {
+
+                e.stopPropagation();
+
+                deleteFile(file);
+
+            };
+
+            fileList.appendChild(card);
+
+        });
 
     });
 
 }
+    savedFiles = [];
+
+    const snapshot =
+        await getDocs(collection(db, "sassyFiles"));
+
+    snapshot.forEach(docSnap => {
+
+        savedFiles.push({
+
+            id: docSnap.id,
+
+            ...docSnap.data()
+
+        });
+
+    });
+
+    // 工事名→図面番号→追加日で並び替え
+    savedFiles.sort((a, b) => {
+
+        const project =
+            (a.project || "").localeCompare(
+                b.project || "",
+                "ja"
+            );
+
+        if (project !== 0) return project;
+
+        const number =
+            (a.number || "").localeCompare(
+                b.number || "",
+                "ja"
+            );
+
+        if (number !== 0) return number;
+
+        return (b.date || "")
+            .localeCompare(a.date || "");
+
+    });
+
+    displayFiles();
+// =========================
+// 保存処理
+// =========================
+
 fileInput.addEventListener("change", async () => {
 
     const file = fileInput.files[0];
 
     if (!file) return;
 
-    // 同じ図面番号の旧版を最新版解除
+    if (!projectName.value.trim()) {
+        alert("工事名を入力してください。");
+        return;
+    }
+
+    if (!drawingNumber.value.trim()) {
+        alert("図面番号を入力してください。");
+        return;
+    }
+
+    // 同じ工事・同じ図面番号の最新版を解除
     const snapshot = await getDocs(collection(db, "sassyFiles"));
 
     for (const item of snapshot.docs) {
@@ -147,7 +263,8 @@ fileInput.addEventListener("change", async () => {
         const data = item.data();
 
         if (
-            data.number === drawingNumber.value &&
+            data.project === projectName.value.trim() &&
+            data.number === drawingNumber.value.trim() &&
             data.latest === true
         ) {
 
@@ -170,10 +287,14 @@ fileInput.addEventListener("change", async () => {
 
     await uploadBytes(storageRef, file);
 
-    const downloadURL = await getDownloadURL(storageRef);
-      await addDoc(
+    const downloadURL =
+        await getDownloadURL(storageRef);
+
+    // Firestoreへ保存
+    await addDoc(
         collection(db, "sassyFiles"),
         {
+            project: projectName.value.trim(),
             number: drawingNumber.value.trim(),
             title: drawingName.value.trim(),
             memo: drawingMemo.value.trim(),
@@ -185,7 +306,7 @@ fileInput.addEventListener("change", async () => {
         }
     );
 
-    // 入力欄をリセット
+    // 入力欄リセット
     drawingNumber.value = "";
     drawingName.value = "";
     drawingMemo.value = "";
@@ -196,41 +317,81 @@ fileInput.addEventListener("change", async () => {
     await loadFiles();
 
 });
-async function deleteFile(file) {
-
-    if (!confirm("削除しますか？")) return;
-
-    await deleteDoc(doc(db, "sassyFiles", file.id));
-
-    if (file.storagePath) {
-        const fileRef = ref(storage, file.storagePath);
-        await deleteObject(fileRef);
-    }
-
-    await loadFiles();
-}
+  // =========================
+// メモ編集
+// =========================
 
 async function editMemo(id) {
 
-    const target = savedFiles.find(file => file.id === id);
+    const target =
+        savedFiles.find(file => file.id === id);
 
     if (!target) return;
 
-    const memo = prompt("メモを編集", target.memo || "");
+    const memo =
+        prompt("メモを編集", target.memo || "");
 
     if (memo === null) return;
 
     await updateDoc(
         doc(db, "sassyFiles", id),
         {
-            memo: memo
+            memo: memo.trim()
         }
     );
 
     await loadFiles();
+
 }
 
-searchInput.addEventListener("input", displayFiles);
-latestOnly.addEventListener("change", displayFiles);
+// =========================
+// 削除
+// =========================
 
-loadFiles();
+async function deleteFile(file) {
+
+    if (!confirm("この図面を削除しますか？")) return;
+
+    try {
+
+        await deleteDoc(
+            doc(db, "sassyFiles", file.id)
+        );
+
+        if (file.storagePath) {
+
+            const fileRef =
+                ref(storage, file.storagePath);
+
+            await deleteObject(fileRef);
+
+        }
+
+        await loadFiles();
+
+        alert("削除しました。");
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert("削除に失敗しました。");
+
+    }
+
+}
+
+// =========================
+// 検索・チェックボックス
+// =========================
+
+searchInput.addEventListener(
+    "input",
+    displayFiles
+);
+
+latestOnly.addEventListener(
+    "change",
+    displayFiles
+);
+}
