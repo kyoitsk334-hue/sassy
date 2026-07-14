@@ -48,7 +48,6 @@ const file = fileInput.files[0];
 if(!file) return;
 
 
-// 入力チェック
 
 if(!projectName.value.trim()){
 
@@ -59,6 +58,7 @@ return;
 }
 
 
+
 if(!categoryName.value.trim()){
 
 alert("工種を入力してください");
@@ -66,6 +66,7 @@ alert("工種を入力してください");
 return;
 
 }
+
 
 
 if(!documentName.value.trim()){
@@ -83,32 +84,36 @@ return;
 const reader = new FileReader();
 
 
+
 reader.onload = function(e){
 
 
 const data = {
 
-
 id: Date.now(),
-
 
 project:
 projectName.value.trim(),
 
-
 category:
 categoryName.value.trim(),
-
 
 type:
 documentType.value,
 
+
+// フォルダ設定
+
 folder:
 documentType.value === "SDS"
 ? "資料"
-: documentType.value === "手順書"
+:
+documentType.value === "手順書"
 ? "手順書本体"
-: "資料",
+:
+"資料",
+
+
 title:
 documentName.value.trim(),
 
@@ -131,8 +136,8 @@ new Date().toLocaleString("ja-JP"),
 
 latest:true
 
-
 };
+
 
 
 // 保存
@@ -146,10 +151,13 @@ JSON.stringify(savedFiles)
 );
 
 
-// 初期化
+
+// リセット
 
 documentName.value="";
+
 documentMemo.value="";
+
 fileInput.value="";
 
 
@@ -157,7 +165,6 @@ fileInput.value="";
 alert("保存しました！");
 
 
-// 表示更新
 
 displayFiles();
 
@@ -165,17 +172,24 @@ displayFiles();
 };
 
 
+
 reader.readAsDataURL(file);
 
 
 });
+
+
+
+
 // ===============================
 // 一覧表示
 // ===============================
 
+
 function displayFiles(){
 
-fileList.innerHTML = "";
+
+fileList.innerHTML="";
 
 
 const keyword =
@@ -183,21 +197,28 @@ searchInput.value.toLowerCase();
 
 
 
-const projects = {};
+const projects={};
 
 
-// 工事ごとにまとめる
+
+// データ整理
 
 savedFiles.forEach(file=>{
 
 
 const match =
 
-file.project.toLowerCase().includes(keyword) ||
+file.project.toLowerCase().includes(keyword)
 
-file.category.toLowerCase().includes(keyword) ||
+||
 
-file.type.toLowerCase().includes(keyword) ||
+file.category.toLowerCase().includes(keyword)
+
+||
+
+file.type.toLowerCase().includes(keyword)
+
+||
 
 file.title.toLowerCase().includes(keyword);
 
@@ -220,21 +241,34 @@ projects[file.project]={};
 }
 
 
+
 if(!projects[file.project][file.category]){
 
-projects[file.project][file.category]=[];
+projects[file.project][file.category]={};
 
 }
 
 
-projects[file.project][file.category].push(file);
+
+if(!projects[file.project][file.category][file.type]){
+
+projects[file.project][file.category][file.type]=[];
+
+}
+
+
+
+projects[file.project][file.category][file.type].push(file);
 
 
 });
 
 
 
+
+
 // 表示
+
 
 Object.keys(projects).forEach(project=>{
 
@@ -254,8 +288,8 @@ projectBox.innerHTML=
 `;
 
 
-
 fileList.appendChild(projectBox);
+
 
 
 
@@ -272,7 +306,6 @@ categoryBox.className="card";
 categoryBox.style.marginLeft="20px";
 
 
-
 categoryBox.innerHTML=
 `
 <div class="name">
@@ -287,7 +320,39 @@ fileList.appendChild(categoryBox);
 
 
 
-projects[project][category].forEach(file=>{
+
+Object.keys(projects[project][category]).forEach(type=>{
+
+
+const typeBox =
+document.createElement("div");
+
+
+typeBox.className="card";
+
+
+typeBox.style.marginLeft="40px";
+
+
+typeBox.innerHTML=
+`
+<div class="name">
+📂 ${type}
+</div>
+`;
+
+
+
+fileList.appendChild(typeBox);
+
+
+
+
+
+
+projects[project][category][type]
+.forEach(file=>{
+
 
 
 const card =
@@ -298,7 +363,7 @@ document.createElement("div");
 card.className="card";
 
 
-card.style.marginLeft="40px";
+card.style.marginLeft="60px";
 
 
 
@@ -307,19 +372,12 @@ card.innerHTML=
 
 <div class="name">
 
-📄 ${file.type}
+📄 ${file.title}
 
 </div>
 
 
 <div>
-
-${file.title}
-
-</div>
-
-
-<div class="type">
 
 ${file.fileName}
 
@@ -346,8 +404,8 @@ ${file.date}
 
 </button>
 
-
 `;
+
 
 
 
@@ -371,12 +429,14 @@ file.fileData;
 
 
 
+
 // 削除
 
 card.querySelector(".delete")
 .onclick=function(e){
 
 e.stopPropagation();
+
 
 
 if(confirm("削除しますか？")){
@@ -388,10 +448,12 @@ x=>x.id !== file.id
 );
 
 
+
 localStorage.setItem(
 "sassyFiles",
 JSON.stringify(savedFiles)
 );
+
 
 
 displayFiles();
@@ -399,8 +461,8 @@ displayFiles();
 
 }
 
-
 };
+
 
 
 
@@ -411,6 +473,10 @@ fileList.appendChild(card);
 });
 
 
+
+});
+
+
 });
 
 
@@ -418,6 +484,8 @@ fileList.appendChild(card);
 
 
 }
+
+
 
 
 
@@ -432,10 +500,12 @@ displayFiles
 );
 
 
+
 latestOnly.addEventListener(
 "change",
 displayFiles
 );
+
 
 
 
