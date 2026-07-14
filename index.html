@@ -2,24 +2,28 @@
 <html lang="ja">
 
 <head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Sassy</title>
+
 <link rel="stylesheet" href="style.css">
 
 </head>
-
 
 
 <body>
 
 
 <header>
-  <header>
 
 <div class="logo">
     <span class="logo-icon">▛S</span>
     <span class="logo-text">S</span>
 </div>
-    
-</header>
+
 </header>
 
 
@@ -27,13 +31,18 @@
 <main>
 
 
+<!-- ファイル選択 -->
 
 <input
 type="file"
 id="fileInput"
-accept=".pdf,.jpg,.jpeg,.png"
+accept=".pdf,.jpg,.jpeg,.png,.xlsx"
 hidden
 >
+
+
+
+<!-- 工事名 -->
 
 <input
 type="text"
@@ -41,37 +50,76 @@ id="projectName"
 placeholder="工事名を入力..."
 >
 
+
+
+<!-- 工種 -->
+
 <input
 type="text"
-id="drawingNumber"
-placeholder="図面番号（例：A-001）"
+id="categoryName"
+placeholder="工種を入力（例：足場工）..."
 >
 
 
 
+<!-- 資料カテゴリ -->
+
+<select id="documentType">
+
+<option value="SDS">
+SDS
+</option>
+
+<option value="作業手順書">
+作業手順書
+</option>
+
+<option value="周知記録">
+周知記録
+</option>
+
+<option value="出面表">
+出面表
+</option>
+
+<option value="その他">
+その他
+</option>
+
+</select>
+
+
+
+<!-- 資料名 -->
+
 <input
 type="text"
-id="drawingName"
-placeholder="図面名（例：1階平面図）"
+id="documentName"
+placeholder="資料名を入力..."
 >
 
 
+
+<!-- メモ -->
 
 <textarea
-id="drawingMemo"
+id="documentMemo"
 placeholder="メモを入力..."
 ></textarea>
 
 
 
+<!-- 検索 -->
 
 <input
 type="text"
 id="searchInput"
-placeholder="図面番号・ファイル名で検索..."
+placeholder="工種・資料名で検索..."
 >
 
 
+
+<!-- 最新版 -->
 
 <label>
 
@@ -90,13 +138,20 @@ id="latestOnly"
 
 
 
-<button id="addButton" onclick="document.getElementById('fileInput').click()">
+<!-- 追加ボタン -->
 
-＋ 図面を追加
+<button 
+id="addButton"
+onclick="document.getElementById('fileInput').click()"
+>
+
+＋ 資料を追加
 
 </button>
 
 
+
+<!-- 一覧表示 -->
 
 <div id="fileList"></div>
 
