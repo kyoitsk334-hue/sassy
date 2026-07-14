@@ -62,7 +62,7 @@ placeholder="工種を入力（例：足場工）..."
 
 
 
-<!-- 資料カテゴリ -->
+<!-- 書類種類 -->
 
 <select id="documentType">
 
@@ -70,12 +70,8 @@ placeholder="工種を入力（例：足場工）..."
 SDS
 </option>
 
-<option value="作業手順書">
-作業手順書
-</option>
-
-<option value="周知記録">
-周知記録
+<option value="手順書">
+手順書
 </option>
 
 <option value="出面表">
@@ -100,8 +96,6 @@ placeholder="資料名を入力..."
 
 
 
-<!-- メモ -->
-
 <textarea
 id="documentMemo"
 placeholder="メモを入力..."
@@ -118,8 +112,6 @@ placeholder="工種・資料名で検索..."
 >
 
 
-
-<!-- 最新版 -->
 
 <label>
 
@@ -138,9 +130,7 @@ id="latestOnly"
 
 
 
-<!-- 追加ボタン -->
-
-<button 
+<button
 id="addButton"
 onclick="document.getElementById('fileInput').click()"
 >
@@ -151,8 +141,6 @@ onclick="document.getElementById('fileInput').click()"
 
 
 
-<!-- 一覧表示 -->
-
 <div id="fileList"></div>
 
 
@@ -161,14 +149,12 @@ onclick="document.getElementById('fileInput').click()"
 
 
 
-<script 
+<script
 type="module"
 src="script.js">
 </script>
 
 
-
 </body>
-
 
 </html>
