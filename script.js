@@ -41,9 +41,10 @@ const fileInput = document.getElementById("fileInput");
 const fileList = document.getElementById("fileList");
 
 const projectName = document.getElementById("projectName");
-const drawingNumber = document.getElementById("drawingNumber");
-const drawingName = document.getElementById("drawingName");
-const drawingMemo = document.getElementById("drawingMemo");
+const categoryName = document.getElementById("categoryName");
+const documentType = document.getElementById("documentType");
+const documentName = document.getElementById("documentName");
+const documentMemo = document.getElementById("documentMemo");
 
 const searchInput = document.getElementById("searchInput");
 const latestOnly = document.getElementById("latestOnly");
