@@ -17,6 +17,7 @@ import {
     getDownloadURL,
     deleteObject
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+console.log("ファイル選択イベント開始");
 
 const firebaseConfig = {
     apiKey: "AIzaSyCpozLhjqRzC3XMHNWncGTeJ78u9AAoc9I",
