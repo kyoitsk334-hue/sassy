@@ -313,14 +313,10 @@ async()=>{
                 project:
                 projectName.value.trim(),
 
-                number:
-                drawingNumber.value.trim(),
-
-                title:
-                drawingName.value.trim(),
-
-                memo:
-                drawingMemo.value.trim(),
+                category: categoryName.value.trim(),
+type: documentType.value,
+title: documentName.value.trim(),
+memo: documentMemo.value.trim(),
 
 
                 fileName:
