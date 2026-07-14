@@ -103,7 +103,12 @@ categoryName.value.trim(),
 type:
 documentType.value,
 
-
+folder:
+documentType.value === "SDS"
+? "資料"
+: documentType.value === "手順書"
+? "手順書本体"
+: "資料",
 title:
 documentName.value.trim(),
 
