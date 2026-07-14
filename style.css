@@ -2,9 +2,10 @@
     box-sizing:border-box;
 }
 
+
 body{
     margin:0;
-    font-family:Arial, "Noto Sans JP", sans-serif;
+    font-family:Arial,"Noto Sans JP",sans-serif;
     background:#f2f4f8;
     color:#1f2937;
 }
@@ -12,149 +13,228 @@ body{
 
 /* ヘッダー */
 header{
+
     background:#021b15;
     color:white;
+
     padding:22px 20px;
+
     display:flex;
     align-items:center;
     gap:15px;
+
+    animation:fadeDown 0.8s ease;
 }
 
 
 /* ロゴ */
 .logo{
+
     width:55px;
     height:55px;
+
     background:#00a878;
     color:#021b15;
+
     font-size:38px;
     font-weight:900;
+
     display:flex;
     align-items:center;
     justify-content:center;
+
     border-radius:8px;
+
     transform:skew(-8deg);
-    box-shadow:0 4px 10px rgba(0,0,0,0.3);
+
+    box-shadow:
+    0 4px 10px rgba(0,0,0,0.3);
+
+    position:relative;
+    overflow:hidden;
+}
+
+
+/* ロゴ光 */
+.logo::after{
+
+    content:"";
+
+    position:absolute;
+
+    top:0;
+    left:-100%;
+
+    width:50%;
+    height:100%;
+
+    background:linear-gradient(
+        120deg,
+        transparent,
+        rgba(255,255,255,0.7),
+        transparent
+    );
+
+    animation:shine 3s infinite;
+
 }
 
 
 /* タイトル */
 header h1{
+
     margin:0;
+
     font-size:32px;
+
     letter-spacing:2px;
+
 }
 
 
 /* メイン */
 main{
+
     padding:20px;
+
     max-width:900px;
+
     margin:auto;
+
+    animation:fadeUp 0.8s ease 0.2s both;
+
 }
 
 
 /* 検索エリア */
 .search-area{
+
     display:flex;
+
     gap:10px;
+
     margin-bottom:20px;
+
 }
 
 
 .search-area input{
+
     flex:1;
+
     padding:13px;
+
     border-radius:8px;
+
     border:1px solid #ccc;
+
     font-size:16px;
+
 }
 
 
 /* ボタン */
 button{
+
     border:none;
+
     cursor:pointer;
+
     border-radius:8px;
+
     padding:12px 18px;
+
     font-weight:bold;
+
+    transition:0.2s;
+
 }
 
 
+button:active{
+
+    transform:scale(0.95);
+
+}
+
+
+
+/* 追加ボタン */
 #addButton{
+
     background:#00a878;
+
     color:white;
+
+    box-shadow:
+    0 5px 15px rgba(0,168,120,0.35);
+
+    transition:0.3s;
+
 }
 
 
 #addButton:hover{
+
     background:#008c65;
+
+    transform:translateY(-3px);
+
+    box-shadow:
+    0 8px 20px rgba(0,168,120,0.5);
+
 }
+
+
+
+/* ファイル追加エリア */
+.upload-box{
+
+    background:white;
+
+    padding:20px;
+
+    border-radius:12px;
+
+    margin-bottom:20px;
+
+    box-shadow:
+    0 4px 12px rgba(0,0,0,0.08);
+
+}
+
 
 
 /* ファイルカード */
 .file-card{
+
     background:white;
+
     border-radius:12px;
+
     padding:18px;
+
     margin-bottom:15px;
-    box-shadow:0 4px 12px rgba(0,0,0,0.08);
+
+    box-shadow:
+    0 4px 12px rgba(0,0,0,0.08);
+
     display:flex;
+
     justify-content:space-between;
+
     align-items:center;
-}
 
+    transition:0.3s;
 
-.file-info{
-    display:flex;
-    flex-direction:column;
-    gap:6px;
-}
-
-
-.file-name{
-    font-size:18px;
-    font-weight:bold;
-}
-
-
-/* 削除ボタン */
-.delete-btn{
-    background:#dc2626;
-    color:white;
-}
-
-
-.delete-btn:hover{
-    background:#b91c1c;
-}
-
-
-/* ファイル追加ボタン周り */
-.upload-box{
-    background:white;
-    padding:20px;
-    border-radius:12px;
-    margin-bottom:20px;
-    box-shadow:0 4px 12px rgba(0,0,0,0.08);
-}
-
-
-/* スマホ対応 */
-@media(max-width:600px){
-
-    header h1{
-        font-size:26px;
-    }
-
-    .search-area{
-        flex-direction:column;
-    }
-
-    .file-card{
-        flex-direction:column;
-        align-items:flex-start;
-        gap:12px;
-    }
+    animation:fadeUp 0.5s ease;
 
 }
+
+
+.file-card:hover{
+
+    transform:translateY(-5px);
+
+    box-shadow:
+    0 10px 25px rgba(0
