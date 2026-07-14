@@ -210,3 +210,229 @@ function displayFiles(){
 
 
 }
+// =========================
+// Firestore読み込み
+// =========================
+
+async function loadFiles(){
+
+    savedFiles = [];
+
+
+    const snapshot =
+        await getDocs(
+            collection(db,"sassyFiles")
+        );
+
+
+    snapshot.forEach(docSnap=>{
+
+        savedFiles.push({
+
+            id:docSnap.id,
+
+            ...docSnap.data()
+
+        });
+
+    });
+
+
+    displayFiles();
+
+}
+
+
+
+// =========================
+// 図面追加
+// =========================
+
+fileInput.addEventListener(
+"change",
+async()=>{
+
+
+    const file =
+        fileInput.files[0];
+
+
+    if(!file) return;
+
+
+
+    if(!projectName.value.trim()){
+
+        alert("工事名を入力してください");
+
+        return;
+
+    }
+
+
+    if(!drawingNumber.value.trim()){
+
+        alert("図面番号を入力してください");
+
+        return;
+
+    }
+
+
+
+    try{
+
+
+        const storageRef =
+            ref(
+                storage,
+                `drawings/${Date.now()}_${file.name}`
+            );
+
+
+
+        await uploadBytes(
+            storageRef,
+            file
+        );
+
+
+
+        const url =
+            await getDownloadURL(
+                storageRef
+            );
+
+
+
+        await addDoc(
+            collection(db,"sassyFiles"),
+            {
+
+                project:
+                projectName.value.trim(),
+
+                number:
+                drawingNumber.value.trim(),
+
+                title:
+                drawingName.value.trim(),
+
+                memo:
+                drawingMemo.value.trim(),
+
+
+                fileName:
+                file.name,
+
+
+                url:url,
+
+
+                storagePath:
+                storageRef.fullPath,
+
+
+                latest:true,
+
+
+                date:
+                new Date()
+                .toLocaleString("ja-JP")
+
+            }
+        );
+
+
+
+        alert("保存しました！");
+
+
+
+        drawingNumber.value="";
+        drawingName.value="";
+        drawingMemo.value="";
+        fileInput.value="";
+
+
+
+        loadFiles();
+
+
+
+    }catch(error){
+
+        console.error(error);
+
+        alert("保存失敗しました");
+
+    }
+
+
+
+});
+
+
+
+// =========================
+// 削除
+// =========================
+
+async function deleteFile(file){
+
+
+    if(!confirm("削除しますか？"))
+        return;
+
+
+
+    await deleteDoc(
+        doc(
+            db,
+            "sassyFiles",
+            file.id
+        )
+    );
+
+
+
+    if(file.storagePath){
+
+        await deleteObject(
+            ref(
+                storage,
+                file.storagePath
+            )
+        );
+
+    }
+
+
+    loadFiles();
+
+}
+
+
+
+// =========================
+// 検索
+// =========================
+
+searchInput.addEventListener(
+"input",
+displayFiles
+);
+
+
+latestOnly.addEventListener(
+"change",
+displayFiles
+);
+
+
+
+// =========================
+// 起動
+// =========================
+
+loadFiles();
