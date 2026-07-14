@@ -241,7 +241,8 @@ function displayFiles() {
 // =========================
 
 fileInput.addEventListener("change", async () => {
-
+    
+console.log("ファイル選択されました");
     const file = fileInput.files[0];
 
     if (!file) return;
@@ -287,6 +288,7 @@ fileInput.addEventListener("change", async () => {
     );
 
     await uploadBytes(storageRef, file);
+    console.log("Storageアップロード完了");
 
     const downloadURL =
         await getDownloadURL(storageRef);
@@ -306,7 +308,7 @@ fileInput.addEventListener("change", async () => {
             storagePath: storageRef.fullPath
         }
     );
-
+console.log("Firestore保存完了");
     // 入力欄リセット
     drawingNumber.value = "";
     drawingName.value = "";
@@ -395,4 +397,3 @@ latestOnly.addEventListener(
     "change",
     displayFiles
 );
-}
