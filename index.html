@@ -94,7 +94,31 @@ id="documentName"
 placeholder="資料名を入力..."
 >
 
+<!-- フォルダ -->
 
+<select id="folderName">
+
+<option value="安全書類">
+安全書類
+</option>
+
+<option value="図面">
+図面
+</option>
+
+<option value="写真">
+写真
+</option>
+
+<option value="協力会社">
+協力会社
+</option>
+
+<option value="その他">
+その他
+</option>
+
+</select>
 
 <textarea
 id="documentMemo"
@@ -134,7 +158,29 @@ id="latestOnly"
 id="addButton"
 onclick="document.getElementById('fileInput').click()"
 >
+<div id="folderBar">
 
+<button class="folderBtn" data-folder="すべて">
+📁 すべて
+</button>
+
+<button class="folderBtn" data-folder="安全書類">
+📁 安全書類
+</button>
+
+<button class="folderBtn" data-folder="図面">
+📁 図面
+</button>
+
+<button class="folderBtn" data-folder="写真">
+📁 写真
+</button>
+
+<button class="folderBtn" data-folder="協力会社">
+📁 協力会社
+</button>
+
+</div>
 ＋ 資料を追加
 
 </button>
