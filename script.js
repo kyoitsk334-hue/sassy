@@ -512,3 +512,36 @@ displayFiles
 // 初回表示
 
 displayFiles();
+/* ===== フォルダバー ===== */
+
+#folderBar{
+    display:flex;
+    gap:10px;
+    overflow-x:auto;
+    padding:10px 0;
+    margin:15px 0;
+}
+
+#folderBar::-webkit-scrollbar{
+    display:none;
+}
+
+.folderBtn{
+    background:#1f2937;
+    color:white;
+    border:none;
+    border-radius:12px;
+    padding:10px 18px;
+    cursor:pointer;
+    white-space:nowrap;
+    font-size:14px;
+    transition:.2s;
+}
+
+.folderBtn:hover{
+    transform:translateY(-2px);
+}
+
+.folderBtn.active{
+    background:#10b981;
+}
